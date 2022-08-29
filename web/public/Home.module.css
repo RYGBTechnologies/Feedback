@@ -168,9 +168,9 @@ html {
   font-family: 'Product Sans';
   font-style: normal;
   font-weight: normal;
-  src: url('public/fonts/ProductSans.woff') format('woff'),
-       url('public/fonts/ProductSans.ttf') format('truetype'),
-       url('public/fonts/ProductSans.woff2') format('woff2');
+  src: url('ProductSans.woff') format('woff'),
+       url('ProductSans.ttf') format('truetype'),
+       url('ProductSans.woff2') format('woff2');
 }
 
 .chats {

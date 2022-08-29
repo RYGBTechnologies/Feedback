@@ -16,6 +16,7 @@
     "@coreui/react": "^4.3.1",
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
+    "@next/bundle-analyzer": "^12.2.5",
     "@stripe/stripe-js": "^1.31.0",
     "axios": "^0.26.1",
     "cookie-cutter": "^0.2.0",

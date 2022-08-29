@@ -94,13 +94,7 @@ export default function Home() {
     }
   }, [router.isReady]);
 
-  const videodivRef2 = useRef(null);
-
   const [store, setStore] = useState("")
-
-  if ("mmredblock62@gmail.com" == undefined && router.isReady) {
-    router.push('https://rygb.tech/accounts/signin/index.php?redirect=https://manager.rygb.tech/dash')
-  }
 
   function useDebounce(value, delay) {
     // State and setters for debounced value
@@ -140,11 +134,11 @@ export default function Home() {
       <div className={styles.itemsgrid}>
         <h1 className={styles.text} id="text">How was your experience at RYGB?</h1>
         <div id="stars" className={styles.stargrid}>
-          <img onClick={() => setStars(1)} className={styles.star} src="star.png" id="star1"></img>
-          <img onClick={() => setStars(2)} className={styles.star} src="star.png" id="star2"></img>
-          <img onClick={() => setStars(3)} className={styles.star} src="star.png" id="star3"></img>
-          <img onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4"></img>
-          <img onClick={() => setStars(5)} className={styles.star} src="introstar.png" id="star5"></img>
+          <img alt="1 Star" onClick={() => setStars(1)} className={styles.star} src="star.png" id="star1"></img>
+          <img alt="2 Stars" onClick={() => setStars(2)} className={styles.star} src="star.png" id="star2"></img>
+          <img alt="3 Stars" onClick={() => setStars(3)} className={styles.star} src="star.png" id="star3"></img>
+          <img alt="4 Stars" onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4"></img>
+          <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="introstar.png" id="star5"></img>
         </div>
         <div id="filledstars" className={styles.filledstars}>
           <img id="fstar1" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>

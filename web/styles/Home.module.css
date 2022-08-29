@@ -164,15 +164,6 @@ html {
   color: blue;
 }
 
-@font-face {
-  font-family: 'Product Sans';
-  font-style: normal;
-  font-weight: normal;
-  src: url('ProductSans.woff') format('woff'),
-       url('ProductSans.ttf') format('truetype'),
-       url('ProductSans.woff2') format('woff2');
-}
-
 .chats {
   transition: transform .2s;
   /* Animation */

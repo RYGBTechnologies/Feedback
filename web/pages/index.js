@@ -91,14 +91,19 @@ export default function Home() {
       audio.play()
     }
     if ("mmredblock62@gmail.com" != undefined) {
+      console.log(store)
+      const date = new Date();
       axios({
         method: 'post',
         url: 'https://rygb.tech:8443/addSFeedback',
         body: {
-          stars: stars,
+          store: "RYGB",
           email: "mmredblock62@gmail.com",
-          store: store,
-          date: new Date().toISOString(),
+          stars: 5,
+          date: "Today",
+        },
+        headers: {
+          'Content-Type': 'application/json',
         }
       }).then(function (response) {
         console.log(response);

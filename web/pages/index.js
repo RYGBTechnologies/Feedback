@@ -93,7 +93,7 @@ export default function Home() {
     if ("mmredblock62@gmail.com" != undefined) {
       axios({
         method: 'post',
-        url: 'https://rygb.tech:8443/addStoreFeedback',
+        url: 'https://rygb.tech:8443/addSFeedback',
         body: {
           stars: stars,
           email: "mmredblock62@gmail.com",

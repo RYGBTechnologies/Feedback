@@ -54,12 +54,12 @@ export default function Home() {
 
   function starBounceAnimation() {
     const star = document.getElementById("star");
-    const anim = star.animate({transform: "scale(1.3)", filter: "brightness(1.5)"}, {duration: 300, ease: "easeInOut"})
+    const anim = star.animate({transform: "scale(1.3)", filter: "brightness(1.5)"}, {duration: 150, ease: "easeInOut"})
     anim.onfinish = () => {
       star.style.transform = "scale(1.3)"
       star.style.filter = "brightness(1.3)"
       document.getElementById("totalstars").innerHTML = parseInt(document.getElementById("totalstars").innerHTML) + 1;
-      const anim2 = star.animate({transform: "scale(1)", filter: "brightness(1)"}, {duration: 300, ease: "easeInOut"})
+      const anim2 = star.animate({transform: "scale(1)", filter: "brightness(1)"}, {duration: 150, ease: "easeInOut"})
       anim2.onfinish = () => {
         star.style.transform = "scale(1)"
         star.style.filter = "brightness(1)"
@@ -93,32 +93,21 @@ export default function Home() {
     if ("mmredblock62@gmail.com" != undefined) {
       console.log(store)
       const date = new Date();
-      axios({
-        method: 'post',
-        url: 'https://rygb.tech:8443/addSFeedback',
-        body: {
-          store: "RYGB",
-          email: "mmredblock62@gmail.com",
-          stars: 5,
-          date: "Today",
-        },
-        headers: {
-          'Content-Type': 'application/json',
-        }
+      axios.post('https://rygb.tech:8443/addSFeedback', {
+        store: store,
+        email: "mmredblock62@gmail.com",
+        stars: stars,
+        date: date
       }).then(function (response) {
         console.log(response);
       }).catch(function (error) {
         console.log(error);
-      })
+      });
     } else {
-      axios({
-        method: 'post',
-        url: 'https://rygb.tech:8443/addAnonymousStoreFeedback',
-        body: {
-          stars: stars,
-          date: new Date().toISOString(),
-          store: store,
-        }
+      axios.post('https://rygb.tech:8443/addAnonymousStoreFeedback', {
+        store: store,
+        stars: stars,
+        date: date
       }).then(function (response) {
         console.log(response);
       }).catch(function (error) {
@@ -142,11 +131,19 @@ export default function Home() {
         starelems[i].style.transform = "translate(-3%, 40%) rotate(-360deg)"
       }
       if (i == starelems.length - 1) {
+        var delay = 3000;
+        if (stars === 3) {
+          delay = 2500;
+        } else if (stars === 1) {
+          delay = 1000;
+        } else if (stars === 2) {
+          delay = 2000;
+        }
         setTimeout(() => {
           const text = document.getElementById("text")
           const anim = text.animate({transform: "scale(1.05)"}, {duration: 200});
+          showModal();
           anim.onfinish = () => {
-            showModal();
             text.style.transform = "scale(1.05)";
             text.innerHTML = "Thank you for your feedback.";
             const anim2 = text.animate({transform: "scale(1)"}, {duration: 200});
@@ -157,6 +154,7 @@ export default function Home() {
               setTimeout(() => {
                 starelems[i2].style.opacity = "1"
               }, i2 * 300)
+              
               starelems[i2].style.transform = "translate(-3%, 40%) rotate(-360deg)"
               const anim3 = starelems[i2].animate({transform: "translate(-50%, -500%) rotate(0deg)", left: "50%", marginTop: "15px"}, {duration: 700, delay: i2 * 300});
               anim3.onfinish = () => {
@@ -165,10 +163,15 @@ export default function Home() {
                 starelems[i2].style.opacity = "0"
                 starelems[i2].style.left = "50%"
                 starelems[i2].style.marginTop = "15px"
+                if (i2 == starelems.length - 1) {
+                  setTimeout(() => {
+                    hideModal()
+                  }, 2000)
+                }
               }
             }
           };
-        }, 3000)
+        }, delay)
       }
     }
   }

@@ -28,6 +28,17 @@ export default function Home() {
     anim.onfinish = () => {
       stars[4].style.transform = "translate(0, 0) rotate(0deg) scale(1)"
     }
+
+    if (router.query.store != undefined) {
+      const text = document.getElementById("text");
+      text.innerHTML = "Here's how " + router.query.store + " did this week"
+      axios({
+        method: 'get',
+        url: 'https://rygb.tech:8443/getAverageSRating?store=' + router.query.store,
+      }).then((response) => {
+        rate(response.data, false)
+      })
+    }
   }
 
   function showModal() {
@@ -48,7 +59,9 @@ export default function Home() {
 
   useEffect(() => {
     if (debouncedStars && router.isReady || stars === 0) {
-      rate(stars)
+      window.requestAnimationFrame(() => {
+        rate(stars)
+      })
     }
   }, [debouncedStars]);
 
@@ -67,7 +80,7 @@ export default function Home() {
     }
   }
 
-  function rate(num) {
+  function rate(num, boolean) {
     const starelems = [];
     for(let i = 1; i <= num; i++) {
       starelems.push(document.getElementById(`fstar${i}`));
@@ -90,7 +103,8 @@ export default function Home() {
       const audio = new Audio('5star.mp3')
       audio.play()
     }
-    if ("mmredblock62@gmail.com" != undefined) {
+    if (boolean || boolean === undefined) {
+      if ("mmredblock62@gmail.com" != undefined) {
       console.log(store)
       const date = new Date();
       axios.post('https://rygb.tech:8443/addSFeedback', {
@@ -114,6 +128,7 @@ export default function Home() {
         console.log(error);
       });
     }
+  }
     
     console.log(starelems)
     var duration = 1300;
@@ -177,7 +192,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    welcome();
+    window.requestAnimationFrame(welcome)
     console.log("router.query: ", router.query)
     if (router.query.store != undefined) {
       setStore(router.query.store)

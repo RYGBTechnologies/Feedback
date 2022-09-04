@@ -23,7 +23,7 @@ export default function Home() {
       stars[i].style.poisiton = "absolute";
       stars[i].style.transform = "translate(0, 0) rotate(360deg)";
     }
-    stars[4].style.transform = "translate(-200px, -100px) rotate(-180deg) scale(15)"
+    stars[4].style.transform = "translate(-170px, -100px) rotate(-180deg) scale(15)"
     const anim = stars[4].animate({transform: "translate(0, 0) rotate(0deg) scale(1)"}, {duration: 800, ease: "easeInOut"})
     anim.onfinish = () => {
       stars[4].style.transform = "translate(0, 0) rotate(0deg) scale(1)"

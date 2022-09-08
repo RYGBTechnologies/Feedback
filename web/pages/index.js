@@ -15,7 +15,23 @@ export default function Home() {
   }
   const animationControls = useAnimation();
   const [stars, setStars] = useState(0)
+  const [mode, setMode] = useState(true)
   const debouncedStars = useDebounce(stars, 1000)
+  const [isConfirmed, setIsConfirmed] = useState(false)
+  var rated = 0;
+
+  function play() {
+    if(!mode) {
+      setIsConfirmed(true)
+    welcome()
+    const playbtn = document.getElementById('playbtn')
+    const anim4 = playbtn.animate({opacity: "0"}, {duration: 500, easing: "ease-in-out"})
+    anim4.onfinish = () => {
+      playbtn.style.display = "none"
+    }
+    }
+    
+  }
   
   function welcome() {
     const stars = document.getElementsByClassName(styles.star);
@@ -36,7 +52,12 @@ export default function Home() {
         method: 'get',
         url: 'https://rygb.tech:8443/getAverageSRating?store=' + router.query.store,
       }).then((response) => {
-        rate(response.data, false)
+        console.log(response)
+        if (isConfirmed == false) {
+          setStars(response.data)
+        }
+        setMode(false)
+        rate(parseInt(response.data), false)
       })
     }
   }
@@ -57,13 +78,29 @@ export default function Home() {
     }
   }
 
+  var reviews = []
+  var soundPlayed = false
+
   useEffect(() => {
-    if (debouncedStars && router.isReady || stars === 0) {
+    if (debouncedStars && router.isReady && stars !== 0) {
       window.requestAnimationFrame(() => {
         rate(stars)
       })
     }
   }, [debouncedStars]);
+
+  const randomUsed = []
+
+  function regenerateRandom() {
+    const random = Math.floor(Math.random() * randomTranslate.length)
+    for (var i = 0; i < reviews.length; i++) {
+      if (reviews[i].style.transform === randomTranslate[random]) {
+        regenerateRandom()
+      }
+    }
+    //keep regeneratign random if the random is the same transform
+    return randomTranslate[random]
+  }
 
   function starBounceAnimation() {
     const star = document.getElementById("star");
@@ -80,30 +117,120 @@ export default function Home() {
     }
   }
 
+  var randomTranslate = [
+    "translate(20%, 20%)",
+    "translate(20%, 225%)",
+    "translate(20%, 400%)",
+    "translate(148%, 90%)",
+    "translate(148%, 330%)",
+    "translate(275%, 20%)",
+    "translate(275%, 225%)",
+    "translate(275%, 400%)",
+  ]
+
   function rate(num, boolean) {
+    if (rated > 1 || stars === 0) {
+      return;
+    }
+    rated++;
+    console.log("rate")
     const starelems = [];
-    for(let i = 1; i <= num; i++) {
+    const actstars = Math.round(stars);
+    const actnum = Math.round(num);
+    for(let i = 1; i <= actnum; i++) {
       starelems.push(document.getElementById(`fstar${i}`));
     }
-    if (stars === 0) {
-      return;
-    } else if (stars === 1) {
-      const audio = new Audio('1star.mp3')
-      audio.play()
-    } else if (stars === 2) {
-      const audio = new Audio('2star.mp3')
-      audio.play()
-    } else if (stars === 3) {
-      const audio = new Audio('3star.mp3')
-      audio.play()
-    } else if (stars === 4) {
-      const audio = new Audio('4star.mp3')
-      audio.play()
-    } else if (stars === 5) {
-      const audio = new Audio('5star.mp3')
-      audio.play()
+    if (!soundPlayed) {
+      console.log("the sound has not been played yet")
+      if (actstars === 1) {
+      const audio = document.getElementById("1star")
+      const promise = audio.play()
+      if (promise !== undefined) {
+        promise.then(function() {
+          // Autoplay started!
+          console.log("autoplay started")
+          setAudioPlayed(true)
+          soundPlayed = true;
+        }).catch(function(error) {
+          // Autoplay was prevented.
+          console.log("autoplay prevented")
+          setAudioPlayed(false)
+          console.log(error)
+          return;
+        });
+      }
+    } else if (actstars === 2) {
+      const audio = document.getElementById("2star")
+      const promise = audio.play()
+      if (promise !== undefined) {
+        promise.then(function() {
+          // Autoplay started!
+          console.log("autoplay started")
+          setAudioPlayed(true)
+          soundPlayed = true;
+        }).catch(function(error) {
+          // Autoplay was prevented.
+          console.log("autoplay prevented")
+          setAudioPlayed(false)
+          console.log(error)
+          return;
+        });
+      }
+    } else if (actstars === 3) {
+      const audio = document.getElementById("3star")
+      const promise = audio.play()
+      if (promise !== undefined) {
+        promise.then(function() {
+          // Autoplay started!
+          console.log("autoplay started")
+          setAudioPlayed(true)
+          soundPlayed = true;
+        }).catch(function(error) {
+          // Autoplay was prevented.
+          console.log("autoplay prevented")
+          setAudioPlayed(false)
+          console.log(error)
+          return;
+        });
+      }
+    } else if (actstars === 4) {
+      const audio = document.getElementById("4star")
+      const promise = audio.play()
+      if (promise !== undefined) {
+        promise.then(function() {
+          // Autoplay started!
+          console.log("autoplay started")
+          setAudioPlayed(true)
+          soundPlayed = true;
+        }).catch(function(error) {
+          // Autoplay was prevented.
+          console.log("autoplay prevented")
+          setAudioPlayed(false)
+          console.log(error)
+          return;
+        });
+      }
+    } else if (actstars === 5) {
+        const audio = document.getElementById("5star")
+      const promise = audio.play()
+      if (promise !== undefined) {
+        promise.then(function() {
+          // Autoplay started!
+          console.log("autoplay started")
+          setAudioPlayed(true)
+          soundPlayed = true;
+        }).catch(function(error) {
+          // Autoplay was prevented.
+          console.log("autoplay prevented")
+          setAudioPlayed(false)
+          console.log(error)
+          return;
+        });
+      }
     }
-    if (boolean || boolean === undefined) {
+    }
+    
+    if (mode) {
       if ("mmredblock62@gmail.com" != undefined) {
       console.log(store)
       const date = new Date();
@@ -136,7 +263,9 @@ export default function Home() {
       duration = 1000;
     }
     for(let i = 0; i < starelems.length; i++) {
-      starelems[i].style.display = "block"
+      console.log(audioPlayed + " - " + " audio played 222")
+      if(audioPlayed || mode) {
+        starelems[i].style.display = "block"
       const anim = starelems[i].animate({transform: "translate(-3%, 60%) rotate(0deg)"}, {duration: duration, delay: i * 300, ease: "easeInOut"});
       anim.onfinish = () => {
         starelems[i].style.transform = "translate(-3%, 40%) rotate(0deg)"
@@ -147,20 +276,113 @@ export default function Home() {
       }
       if (i == starelems.length - 1) {
         var delay = 3000;
-        if (stars === 3) {
+        if (actstars === 3) {
           delay = 2500;
-        } else if (stars === 1) {
+        } else if (actstars === 1) {
           delay = 1000;
-        } else if (stars === 2) {
+        } else if (actstars === 2) {
           delay = 2000;
         }
         setTimeout(() => {
           const text = document.getElementById("text")
           const anim = text.animate({transform: "scale(1.05)"}, {duration: 200});
-          showModal();
+          console.log(mode)
+          if (mode) {
+            window.requestAnimationFrame(showModal)
+          } else {
+            axios({
+              method: 'get',
+              url: 'https://rygb.tech:8443/getSFeedback?store=' + store,
+            }).then(function (response) {
+              const data = response.data;
+              console.log(data)
+              console.log(data[0])
+              console.log(data[0].stars)
+              for(var i = 0; i < data.length; i++) {
+                console.log("i: " + i)
+                const review = document.createElement("div")
+                var random = Math.floor(Math.random() * randomTranslate.length)
+                review.style.transform = randomTranslate[random] + " scale(0.8)"
+                review.id = randomTranslate[random]
+                randomTranslate.splice(random, 1)
+                review.style.opacity = "0"
+                const stars = []
+                var star = document.createElement("img")
+                star.src = "star.png"
+                stars.push(star)
+                star = document.createElement("img")
+                star.src = "star.png"
+                stars.push(star)
+                star = document.createElement("img")
+                star.src = "star.png"
+                stars.push(star)
+                star = document.createElement("img")
+                star.src = "star.png"
+                stars.push(star)
+                star = document.createElement("img")
+                star.src = "star.png"
+                stars.push(star)
+                const stargrid = document.createElement("div")
+                stargrid.style.display = "grid"
+                stargrid.style.gridTemplateColumns = "auto auto auto auto auto"
+                for (var j = 0; j < stars.length; j++) {
+                  stars[j].className = styles.star;
+                  stars[j].style.transform = "translate(0, 0)"
+                  stars[j].style.width = "5vw"
+                  stargrid.appendChild(stars[j])
+                }
+                for(var i2 = 0; i2 < data[i].stars; i2++) {
+                  stars[i2].src = "star-filled.png"
+                }
+                //put the star in a random position on the screen
+
+                const text = document.createElement("p")
+                const date = new Date(data[i].date)
+                let [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()]
+                text.innerHTML = data[i].from
+                text.className = styles.subtext;
+                text.style.fontSize = "1.5vw"
+                const text2 = document.createElement("p")
+                text2.innerHTML = month + "/" + day + "/" + year
+                text2.className = styles.subtext;
+                text2.style.fontSize = "1.5vw"
+                //randomly select a value from randomTranslate and set that as the reviews position
+                review.style.position = "absolute";
+                review.appendChild(stargrid)
+                review.appendChild(text)
+                review.appendChild(text2)
+                reviews.push(review)
+                console.log(review)
+                
+                console.log(random)
+                document.getElementById("reviews").appendChild(review)
+                if (i == 7) {
+                  setLastReview(i)
+                  for(var i = 0; i < reviews.length; i++) {
+                    setTimeout(() => {
+                      console.log(reviews[i].id)
+                      const anim = reviews[i].animate({opacity: "1", transform: reviews[i].id + " scale(1)"}, {duration: 300, ease: "easeInOut"});
+                      anim.onfinish = function() {
+                        reviews[i].style.opacity = "1";
+                        reviews[i].style.transform = reviews[i].id
+                      };
+                   }, i * 200)
+                  }
+                  break;
+                }
+              }
+              
+            }).catch(function (error) {
+              console.log(error);
+            })
+          }
           anim.onfinish = () => {
             text.style.transform = "scale(1.05)";
-            text.innerHTML = "Thank you for your feedback.";
+            if (mode) {
+              text.innerHTML = "Thank you for your feedback.";
+            } else {
+              text.style.display = "none"
+            }
             const anim2 = text.animate({transform: "scale(1)"}, {duration: 200});
             anim2.onfinish = () => {
               text.style.transform = "scale(1)";
@@ -171,23 +393,28 @@ export default function Home() {
               }, i2 * 300)
               
               starelems[i2].style.transform = "translate(-3%, 40%) rotate(-360deg)"
-              const anim3 = starelems[i2].animate({transform: "translate(-50%, -500%) rotate(0deg)", left: "50%", marginTop: "15px"}, {duration: 700, delay: i2 * 300});
+              const anim3 = starelems[i2].animate({transform: "translate(-50%, -700%) rotate(0deg)", left: "50%", marginTop: "15px"}, {duration: 700, delay: i2 * 300});
               anim3.onfinish = () => {
                 starBounceAnimation();
-                starelems[i2].style.transform = "translateX(-50%) translateY(-500%) rotate(0deg)"
+                starelems[i2].style.transform = "translateX(-50%) translateY(-700%) rotate(0deg)"
                 starelems[i2].style.opacity = "0"
                 starelems[i2].style.left = "50%"
                 starelems[i2].style.marginTop = "15px"
-                if (i2 == starelems.length - 1) {
-                  setTimeout(() => {
-                    hideModal()
-                  }, 2000)
+                if (mode) {
+                  if (i2 == starelems.length - 1) {
+                    setTimeout(() => {
+                      hideModal()
+                    }, 2000)
+                  }
                 }
               }
             }
           };
+          
         }, delay)
       }
+      }
+      
     }
   }
 
@@ -202,8 +429,35 @@ export default function Home() {
     
   }, [router.isReady]);
 
+  
+
   const [store, setStore] = useState("")
+  const [audioPlayed, setAudioPlayed] = useState("")
   const debouncedStore = useDebounce(store, 200)
+  const [lastReview, setLastReview] = useState("")
+
+  useEffect(() => {
+    if (!mode) {
+      console.log(audioPlayed + " - audio played")
+    console.log(stars + " - stars")
+    console.log(isConfirmed + " - is confirmed")
+    if (audioPlayed == false && stars != 0 && !isConfirmed) {
+      console.log("btn")
+      console.log(audioPlayed)
+      const play = document.getElementById("playbtn");
+      play.style.display = "block";
+      play.style.color = "white";
+      play.style.cursor = "pointer";
+      play.style.fontSize = "20px"
+      const anim = play.animate({opacity: 1}, {duration: 500, ease: "easeInOut"})
+      anim.onfinish = () => {
+        play.style.opacity = 1;
+      };
+    } else if (audioPlayed == true) {
+      rate(stars, false)
+    }
+    }
+  }, [audioPlayed])
 
   useEffect(() => {
     if (debouncedStore) {
@@ -248,10 +502,13 @@ export default function Home() {
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
         <title>Feedback - RYGB</title>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,700,1,0" />
       </Head>
       <div id={styles.logo} onClick={() => view("Dashboard")}>
          <img id="logo" src="cornermgr.png" width="230" height="230" />
       </div>
+
+      
 
       <div id="smallmodal" className={styles.smallmodal}>
         <img alt="Star" onClick={() => setStars(1)} src="star-filled.png" width="60px" id="star"></img>
@@ -267,6 +524,11 @@ export default function Home() {
           <img alt="4 Stars" onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4"></img>
           <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="introstar.png" id="star5"></img>
         </div>
+        <audio id="5star" src="5star.mp3" style={{display: "none"}}></audio>
+        <audio id="4star" src="4star.mp3" style={{display: "none"}}></audio>
+        <audio id="3star" src="3star.mp3" style={{display: "none"}}></audio>
+        <audio id="2star" src="2star.mp3" style={{display: "none"}}></audio>
+        <audio id="1star" src="1star.mp3" style={{display: "none"}}></audio>
         <div id="filledstars" className={styles.filledstars}>
           <img id="fstar1" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
           <img id="fstar2" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
@@ -275,7 +537,15 @@ export default function Home() {
           <img id="fstar5" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
         </div>
       </div>
-      
+
+      <div id="playbtn" className={styles.playbtn} onClick={() => play()} style={{display: "none", opacity: "0"}}>
+        <span id="span" style={{fontSize:"100px"}} className={styles.playbtnact + " " + "material-symbols-rounded"}>
+          play_arrow
+        </span>
+      </div>
+      <div id="reviews" style={{width: "20%", height: "100%"}}>
+        
+      </div>
       <motion.div
         initial={"hidden"}
         animate={animationControls}

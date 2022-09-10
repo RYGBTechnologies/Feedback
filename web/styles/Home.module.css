@@ -238,6 +238,40 @@ html {
   cursor: pointer
 }
 
+.pulsebutton {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: white;
+  background-color: #525252d6;
+  cursor: pointer;
+  position: relative;
+  display: block;
+  z-index: 1;
+  border-style: none;
+}
+
+.pulsebutton::after {
+  content: '';
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: .75;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  display: block;
+  background-color: #525252d6;
+  border-style: none;
+  animation: bg 1.2s ease infinite;
+}
+
+@keyframes bg {
+  0% { width: 50px; height: 50px; opacity: .75; }
+  100% { width: 75px; height: 75px; opacity: 0; }
+}
 .fstar {
   width: 90px;
   transform: translate(-1500%, 60%) rotate(-360deg);

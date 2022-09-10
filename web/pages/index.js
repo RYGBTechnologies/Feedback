@@ -57,7 +57,10 @@ export default function Home() {
           setStars(response.data)
         }
         setMode(false)
-        rate(parseInt(response.data), false)
+        
+        window.requestAnimationFrame(() => {
+          rate(parseInt(response.data), false)
+        })
       })
     }
   }
@@ -406,6 +409,8 @@ export default function Home() {
                       hideModal()
                     }, 2000)
                   }
+                } else {
+                  spawnArrows()
                 }
               }
             }
@@ -429,7 +434,81 @@ export default function Home() {
     
   }, [router.isReady]);
 
-  
+  var timesranarr = 0;
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    console.log(page);
+    if (page <= 1) {
+      const leftp = document.getElementById("left")
+        const anim = leftp.animate({opacity: "0"}, {duration: 200});
+        anim.onfinish = () => {
+          leftp.style.opacity = "0" 
+        }
+    }
+  }, [page])
+
+  function nextPage() {
+    console.log(page)
+    const rightp = document.getElementById("rightp")
+    const anim = rightp.animate({transform: "translateX(100%)", opacity: "0"}, {duration: 200});
+    anim.onfinish = () => {
+      rightp.style.opacity = "0"
+      rightp.style.transform = "translateX(-50%)"
+      setPage(page + 1)
+      setTimeout(() => {
+        const anim2 = rightp.animate({opacity: "1", transform: "translateX(0%)"}, {duration: 200});
+        anim2.onfinish = () => {
+          rightp.style.opacity = "1"
+          rightp.style.transform = "translateX(0%)"
+        }
+      }, 200)
+      if (page >= 1) {
+        const leftp = document.getElementById("left")
+        leftp.style.display = "block"
+        leftp.style.opacity = "0"
+        const anim = leftp.animate({opacity: "1"}, {duration: 200});
+        anim.onfinish = () => {
+          leftp.style.opacity = "1" 
+        }
+      }
+    }
+  }
+
+  function prevPage() {
+    const rightp = document.getElementById("leftp")
+    console.log(page)
+    const anim = rightp.animate({transform: "translateX(-100%)", opacity: "0"}, {duration: 200});
+    anim.onfinish = () => {
+      rightp.style.opacity = "0"
+      rightp.style.transform = "translateX(50%)"
+      setPage(page - 1)
+      setTimeout(() => {
+        const anim2 = rightp.animate({opacity: "1", transform: "translateX(0%)"}, {duration: 200});
+        anim2.onfinish = () => {
+          rightp.style.opacity = "1"
+          rightp.style.transform = "translateX(0%)"
+        }
+      }, 200)
+    }
+  }
+
+  function spawnArrows() {
+    if (timesranarr > 0) {
+      return;
+    }
+    const arrows = document.getElementById("arrows")
+    document.getElementById("arrows").style.display = "block"
+    arrows.style.opacity = "0";
+    document.getElementById("left").style.display = "none"
+    const anim = arrows.animate({opacity: "1"}, {duration: 200});
+    anim.onfinish = () => {
+      arrows.style.opacity = "1";
+    }
+    document.getElementById("rightp").innerHTML = ">"
+    document.getElementById("leftp").innerHTML = "<"
+    timesranarr++;
+  }
 
   const [store, setStore] = useState("")
   const [audioPlayed, setAudioPlayed] = useState("")
@@ -454,7 +533,9 @@ export default function Home() {
         play.style.opacity = 1;
       };
     } else if (audioPlayed == true) {
-      rate(stars, false)
+      window.requestAnimationFrame(function() {
+        rate(stars, false)
+      })
     }
     }
   }, [audioPlayed])
@@ -538,14 +619,24 @@ export default function Home() {
         </div>
       </div>
 
+      <div id="reviews">
+      </div>
+
+      <div id="arrows" style={{display: "none"}}>
+        <button onClick={() => nextPage()} id="right" className={styles.pulsebutton} style={{right: "0", position: "absolute", marginRight: "20px", top: "50%", transform: "translateY(-50%)"}}>
+          <p id="rightp" className={styles.subtext}></p>
+        </button>
+        <button id="left" onClick={() => prevPage()} className={styles.pulsebutton} style={{position: "absolute", marginLeft: "20px", top:"50%", transform: "translateY(-50%)"}}>
+          <p id="leftp" className={styles.subtext}></p>
+        </button>
+      </div>
+
       <div id="playbtn" className={styles.playbtn} onClick={() => play()} style={{display: "none", opacity: "0"}}>
         <span id="span" style={{fontSize:"100px"}} className={styles.playbtnact + " " + "material-symbols-rounded"}>
           play_arrow
         </span>
       </div>
-      <div id="reviews" style={{width: "20%", height: "100%"}}>
-        
-      </div>
+      
       <motion.div
         initial={"hidden"}
         animate={animationControls}

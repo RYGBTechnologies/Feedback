@@ -360,7 +360,7 @@ export default function Home() {
                 console.log(random)
                 document.getElementById("reviews").appendChild(review)
                 if (i == 7) {
-                  setLastReview(i)
+                  setLastReview(lastReview + 8)
                   for(var i = 0; i < reviews.length; i++) {
                     setTimeout(() => {
                       console.log(reviews[i].id)
@@ -448,6 +448,117 @@ export default function Home() {
     }
   }, [page])
 
+  function regenerateReviews() {
+    const reviewschild = document.getElementById("reviews").children;
+    console.log(reviewschild)
+    console.log(reviewschild.length)
+    for(var i = 0; i < reviewschild.length; i++) {
+      console.log("iteration: " + i)
+      console.log(reviewschild[i])
+      setTimeout(() => {
+        const anim = reviewschild[i].animate({opacity: "0", transform: reviewschild[i].id + " scale(0.8)"}, {duration: 300, ease: "easeInOut"});
+        anim.onfinish = function() {
+          reviewschild[i].style.opacity = "0";
+          reviewschild[i].style.transform = reviewschild[i].id + " scale(0.8)"
+        }
+        if (i == reviewschild.length - 1) {
+        console.log("axios")
+        for(var i2 = 0; i2 < reviewschild.length; i2++) {
+          reviewschild[i2].remove()
+        }
+        axios({
+      method: 'get',
+      url: 'https://rygb.tech:8443/getSFeedback?store=' + store,
+    }).then(function (response) {
+      const data = response.data;
+      console.log(data)
+      console.log(data[0])
+      console.log(data[0].stars)
+      var ivalue = lastReview;
+      for(var i3 = ivalue; i < data.length; i++) {
+        console.log("i: " + i3)
+        const review = document.createElement("div")
+        var random = Math.floor(Math.random() * randomTranslate.length)
+        review.style.transform = randomTranslate[random] + " scale(0.8)"
+        review.id = randomTranslate[random]
+        randomTranslate.splice(random, 1)
+        review.style.opacity = "0"
+        const stars = []
+        var star = document.createElement("img")
+        star.src = "star.png"
+        stars.push(star)
+        star = document.createElement("img")
+        star.src = "star.png"
+        stars.push(star)
+        star = document.createElement("img")
+        star.src = "star.png"
+        stars.push(star)
+        star = document.createElement("img")
+        star.src = "star.png"
+        stars.push(star)
+        star = document.createElement("img")
+        star.src = "star.png"
+        stars.push(star)
+        const stargrid = document.createElement("div")
+        stargrid.style.display = "grid"
+        stargrid.style.gridTemplateColumns = "auto auto auto auto auto"
+        for (var j = 0; j < stars.length; j++) {
+          stars[j].className = styles.star;
+          stars[j].style.transform = "translate(0, 0)"
+          stars[j].style.width = "5vw"
+          stargrid.appendChild(stars[j])
+        }
+        for(var i2 = 0; i2 < data[i].stars; i2++) {
+          stars[i2].src = "star-filled.png"
+        }
+        //put the star in a random position on the screen
+
+        const text = document.createElement("p")
+        const date = new Date(data[i].date)
+        let [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()]
+        text.innerHTML = data[i].from
+        text.className = styles.subtext;
+        text.style.fontSize = "1.5vw"
+        const text2 = document.createElement("p")
+        text2.innerHTML = month + "/" + day + "/" + year
+        text2.className = styles.subtext;
+        text2.style.fontSize = "1.5vw"
+        //randomly select a value from randomTranslate and set that as the reviews position
+        review.style.position = "absolute";
+        review.appendChild(stargrid)
+        review.appendChild(text)
+        review.appendChild(text2)
+        reviews.push(review)
+        console.log(review)
+        
+        console.log(random)
+        document.getElementById("reviews").appendChild(review)
+        if (i3 == 7) {
+          setLastReview(lastReview + 8)
+          for(var i = 0; i < reviews.length; i++) {
+            setTimeout(() => {
+              console.log(reviews[i].id)
+              const anim = reviews[i].animate({opacity: "1", transform: reviews[i].id + " scale(1)"}, {duration: 300, ease: "easeInOut"});
+              anim.onfinish = function() {
+                reviews[i].style.opacity = "1";
+                reviews[i].style.transform = reviews[i].id
+              };
+           }, i * 200)
+          }
+          break;
+        }
+      }
+      
+    }).catch(function (error) {
+      console.log(error);
+    })
+      }
+      }, i * 100)
+      
+    }
+    
+  }
+
   function nextPage() {
     console.log(page)
     const rightp = document.getElementById("rightp")
@@ -456,6 +567,7 @@ export default function Home() {
       rightp.style.opacity = "0"
       rightp.style.transform = "translateX(-50%)"
       setPage(page + 1)
+      regenerateReviews()
       setTimeout(() => {
         const anim2 = rightp.animate({opacity: "1", transform: "translateX(0%)"}, {duration: 200});
         anim2.onfinish = () => {
@@ -463,7 +575,7 @@ export default function Home() {
           rightp.style.transform = "translateX(0%)"
         }
       }, 200)
-      if (page >= 1) {
+      if (page >= 1 && document.getElementById("left").style.display == "none" || document.getElementById("left").style.opacity == "0") {
         const leftp = document.getElementById("left")
         leftp.style.display = "block"
         leftp.style.opacity = "0"
@@ -513,7 +625,7 @@ export default function Home() {
   const [store, setStore] = useState("")
   const [audioPlayed, setAudioPlayed] = useState("")
   const debouncedStore = useDebounce(store, 200)
-  const [lastReview, setLastReview] = useState("")
+  const [lastReview, setLastReview] = useState(0)
 
   useEffect(() => {
     if (!mode) {

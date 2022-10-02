@@ -39,6 +39,7 @@ export default function Home() {
       stars[i].style.poisiton = "absolute";
       stars[i].style.transform = "translate(0, 0) rotate(360deg)";
     }
+    
     stars[4].style.transform = "translate(-170px, -100px) rotate(-180deg) scale(15)"
     const anim = stars[4].animate({transform: "translate(0, 0) rotate(0deg) scale(1)"}, {duration: 800, ease: "easeInOut"})
     anim.onfinish = () => {
@@ -301,6 +302,7 @@ export default function Home() {
               console.log(data)
               console.log(data[0])
               console.log(data[0].stars)
+              setReviews(data)
               for(var i = 0; i < data.length; i++) {
                 console.log("i: " + i)
                 const review = document.createElement("div")
@@ -356,20 +358,17 @@ export default function Home() {
                 review.appendChild(text2)
                 reviews.push(review)
                 console.log(review)
-                
-                console.log(random)
                 document.getElementById("reviews").appendChild(review)
                 if (i == 7) {
                   setLastReview(lastReview + 8)
                   for(var i = 0; i < reviews.length; i++) {
                     setTimeout(() => {
-                      console.log(reviews[i].id)
                       const anim = reviews[i].animate({opacity: "1", transform: reviews[i].id + " scale(1)"}, {duration: 300, ease: "easeInOut"});
                       anim.onfinish = function() {
                         reviews[i].style.opacity = "1";
                         reviews[i].style.transform = reviews[i].id
                       };
-                   }, i * 200)
+                   }, i * 100)
                   }
                   break;
                 }
@@ -390,6 +389,7 @@ export default function Home() {
             anim2.onfinish = () => {
               text.style.transform = "scale(1)";
             }
+            if(mode) {
             for (let i2 = 0; i2 < starelems.length; i2++) {
               setTimeout(() => {
                 starelems[i2].style.opacity = "1"
@@ -414,6 +414,9 @@ export default function Home() {
                 }
               }
             }
+          } else {
+            spawnArrows()
+          }
           };
           
         }, delay)
@@ -435,10 +438,13 @@ export default function Home() {
   }, [router.isReady]);
 
   var timesranarr = 0;
-  const [page, setPage] = useState(1);
+  var page = 1;
+
+  const [axiosReviews, setReviews] = useState([]);
+  const [lastIteration, setLastIteration] = useState(0);
 
   useEffect(() => {
-    console.log(page);
+    console.log("page: " + page);
     if (page <= 1) {
       const leftp = document.getElementById("left")
         const anim = leftp.animate({opacity: "0"}, {duration: 200});
@@ -452,6 +458,8 @@ export default function Home() {
     const reviewschild = document.getElementById("reviews").children;
     console.log(reviewschild)
     console.log(reviewschild.length)
+    console.log("last: " + lastReview)
+    console.log("lastIteration: " + lastIteration)
     for(var i = 0; i < reviewschild.length; i++) {
       console.log("iteration: " + i)
       console.log(reviewschild[i])
@@ -461,22 +469,31 @@ export default function Home() {
           reviewschild[i].style.opacity = "0";
           reviewschild[i].style.transform = reviewschild[i].id + " scale(0.8)"
         }
-        if (i == reviewschild.length - 1) {
+        if (i == reviewschild.length - 2) {
         console.log("axios")
+        setTimeout(() => {
         for(var i2 = 0; i2 < reviewschild.length; i2++) {
           reviewschild[i2].remove()
         }
-        axios({
-      method: 'get',
-      url: 'https://rygb.tech:8443/getSFeedback?store=' + store,
-    }).then(function (response) {
-      const data = response.data;
+        }, i * 350)
+        setTimeout(() => {
+        
+      const data = axiosReviews;
+      if (pagesAndIterations.some(e => e.page === page)) {
+        //ignore
+      } else {
+        const object = {
+            page: page,
+            iteration: lastReview
+        };
+        pagesAndIterations = [...pagesAndIterations, object]
+      }
       console.log(data)
       console.log(data[0])
       console.log(data[0].stars)
-      var ivalue = lastReview;
-      for(var i3 = ivalue; i < data.length; i++) {
-        console.log("i: " + i3)
+      var iterations = 0;
+      for(var i3 = lastReview; i3 < data.length; i3++) {
+        console.log("i3: " + i3)
         const review = document.createElement("div")
         var random = Math.floor(Math.random() * randomTranslate.length)
         review.style.transform = randomTranslate[random] + " scale(0.8)"
@@ -508,15 +525,15 @@ export default function Home() {
           stars[j].style.width = "5vw"
           stargrid.appendChild(stars[j])
         }
-        for(var i2 = 0; i2 < data[i].stars; i2++) {
+        for(var i2 = 0; i2 < data[i3].stars; i2++) {
           stars[i2].src = "star-filled.png"
         }
         //put the star in a random position on the screen
 
         const text = document.createElement("p")
-        const date = new Date(data[i].date)
+        const date = new Date(data[i3].date)
         let [month, day, year] = [date.getMonth(), date.getDate(), date.getFullYear()]
-        text.innerHTML = data[i].from
+        text.innerHTML = data[i3].from
         text.className = styles.subtext;
         text.style.fontSize = "1.5vw"
         const text2 = document.createElement("p")
@@ -530,11 +547,16 @@ export default function Home() {
         review.appendChild(text2)
         reviews.push(review)
         console.log(review)
-        
         console.log(random)
         document.getElementById("reviews").appendChild(review)
-        if (i3 == 7) {
-          setLastReview(lastReview + 8)
+        console.log("i3 " + i3)
+        console.log("iterations " + iterations)
+        iterations++;
+        if (iterations == 8 || iterations == 7 || iterations == data.length - lastReview) {
+          console.log("iterations: " + iterations)
+          setLastReview(lastReview + iterations)
+          setLastIteration(iterations)
+          console.log(pagesAndIterations)
           for(var i = 0; i < reviews.length; i++) {
             setTimeout(() => {
               console.log(reviews[i].id)
@@ -543,30 +565,30 @@ export default function Home() {
                 reviews[i].style.opacity = "1";
                 reviews[i].style.transform = reviews[i].id
               };
-           }, i * 200)
+           }, i * 100)
           }
           break;
         }
+        
       }
       
-    }).catch(function (error) {
-      console.log(error);
-    })
+  }, reviewschild.length * 300)
       }
-      }, i * 100)
+      }, i * 50)
       
     }
     
   }
 
   function nextPage() {
-    console.log(page)
+    console.log("before page: " + page)
+    page++;
+    console.log("after page: " + page)
     const rightp = document.getElementById("rightp")
     const anim = rightp.animate({transform: "translateX(100%)", opacity: "0"}, {duration: 200});
     anim.onfinish = () => {
       rightp.style.opacity = "0"
       rightp.style.transform = "translateX(-50%)"
-      setPage(page + 1)
       regenerateReviews()
       setTimeout(() => {
         const anim2 = rightp.animate({opacity: "1", transform: "translateX(0%)"}, {duration: 200});
@@ -587,6 +609,8 @@ export default function Home() {
     }
   }
 
+  var prevPageBool = false;
+
   function prevPage() {
     const rightp = document.getElementById("leftp")
     console.log(page)
@@ -594,7 +618,20 @@ export default function Home() {
     anim.onfinish = () => {
       rightp.style.opacity = "0"
       rightp.style.transform = "translateX(50%)"
-      setPage(page - 1)
+      const actpage = page - 1;
+      console.log(pagesAndIterations)
+      for(var i = 0; i < pagesAndIterations.length; i++) {
+        console.log("pagesAndIterations")
+        console.log(pagesAndIterations[i])
+        if (pagesAndIterations[i].page == actpage) {
+          setLastReview(pagesAndIterations[i].iteration)
+          console.log("last review: " + lastReview)
+          console.log("last iteration: " + pagesAndIterations[i].iteration)
+        }
+      }
+      page--;
+      prevPageBool = true;
+      
       setTimeout(() => {
         const anim2 = rightp.animate({opacity: "1", transform: "translateX(0%)"}, {duration: 200});
         anim2.onfinish = () => {
@@ -604,6 +641,8 @@ export default function Home() {
       }, 200)
     }
   }
+
+  
 
   function spawnArrows() {
     if (timesranarr > 0) {
@@ -626,6 +665,14 @@ export default function Home() {
   const [audioPlayed, setAudioPlayed] = useState("")
   const debouncedStore = useDebounce(store, 200)
   const [lastReview, setLastReview] = useState(0)
+  var pagesAndIterations = [{page: 1, iteration: 0}];
+
+useEffect(() => {
+    if (prevPageBool) {
+      prevPageBool = false;
+      regenerateReviews()
+    }
+  }, [lastReview])
 
   useEffect(() => {
     if (!mode) {
@@ -715,7 +762,7 @@ export default function Home() {
           <img alt="2 Stars" onClick={() => setStars(2)} className={styles.star} src="star.png" id="star2"></img>
           <img alt="3 Stars" onClick={() => setStars(3)} className={styles.star} src="star.png" id="star3"></img>
           <img alt="4 Stars" onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4"></img>
-          <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="introstar.png" id="star5"></img>
+          <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="star.png" id="star5"></img>
         </div>
         <audio id="5star" src="5star.mp3" style={{display: "none"}}></audio>
         <audio id="4star" src="4star.mp3" style={{display: "none"}}></audio>

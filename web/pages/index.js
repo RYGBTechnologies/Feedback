@@ -144,95 +144,6 @@ export default function Home() {
     for(let i = 1; i <= actnum; i++) {
       starelems.push(document.getElementById(`fstar${i}`));
     }
-    if (!soundPlayed) {
-      console.log("the sound has not been played yet")
-      if (actstars === 1) {
-      const audio = document.getElementById("1star")
-      const promise = audio.play()
-      if (promise !== undefined) {
-        promise.then(function() {
-          // Autoplay started!
-          console.log("autoplay started")
-          setAudioPlayed(true)
-          soundPlayed = true;
-        }).catch(function(error) {
-          // Autoplay was prevented.
-          console.log("autoplay prevented")
-          setAudioPlayed(false)
-          console.log(error)
-          return;
-        });
-      }
-    } else if (actstars === 2) {
-      const audio = document.getElementById("2star")
-      const promise = audio.play()
-      if (promise !== undefined) {
-        promise.then(function() {
-          // Autoplay started!
-          console.log("autoplay started")
-          setAudioPlayed(true)
-          soundPlayed = true;
-        }).catch(function(error) {
-          // Autoplay was prevented.
-          console.log("autoplay prevented")
-          setAudioPlayed(false)
-          console.log(error)
-          return;
-        });
-      }
-    } else if (actstars === 3) {
-      const audio = document.getElementById("3star")
-      const promise = audio.play()
-      if (promise !== undefined) {
-        promise.then(function() {
-          // Autoplay started!
-          console.log("autoplay started")
-          setAudioPlayed(true)
-          soundPlayed = true;
-        }).catch(function(error) {
-          // Autoplay was prevented.
-          console.log("autoplay prevented")
-          setAudioPlayed(false)
-          console.log(error)
-          return;
-        });
-      }
-    } else if (actstars === 4) {
-      const audio = document.getElementById("4star")
-      const promise = audio.play()
-      if (promise !== undefined) {
-        promise.then(function() {
-          // Autoplay started!
-          console.log("autoplay started")
-          setAudioPlayed(true)
-          soundPlayed = true;
-        }).catch(function(error) {
-          // Autoplay was prevented.
-          console.log("autoplay prevented")
-          setAudioPlayed(false)
-          console.log(error)
-          return;
-        });
-      }
-    } else if (actstars === 5) {
-        const audio = document.getElementById("5star")
-      const promise = audio.play()
-      if (promise !== undefined) {
-        promise.then(function() {
-          // Autoplay started!
-          console.log("autoplay started")
-          setAudioPlayed(true)
-          soundPlayed = true;
-        }).catch(function(error) {
-          // Autoplay was prevented.
-          console.log("autoplay prevented")
-          setAudioPlayed(false)
-          console.log(error)
-          return;
-        });
-      }
-    }
-    }
     
     if (mode) {
       if ("mmredblock62@gmail.com" != undefined) {
@@ -270,6 +181,24 @@ export default function Home() {
       console.log(audioPlayed + " - " + " audio played 222")
       if(audioPlayed || mode) {
         starelems[i].style.display = "block"
+        setTimeout(() => {
+        const audioi = i + 1;
+        var s;
+        if(audioi == 5) {
+          //generate a random number between 1 and 2
+          const random = Math.floor(Math.random() * 2) + 1;
+          console.log(random)
+          if (random == 1) {
+            s = audioi + "star.mp3"
+          } else if(random == 2) {
+            s = audioi + "star2.mp3"
+          }
+        } else {
+            s = audioi + "star.mp3";
+        }
+        const audio = new Audio(s);
+        audio.play();
+        }, i * 400 + duration - 400);
       const anim = starelems[i].animate({transform: "translate(-3%, 60%) rotate(0deg)"}, {duration: duration, delay: i * 300, ease: "easeInOut"});
       anim.onfinish = () => {
         starelems[i].style.transform = "translate(-3%, 40%) rotate(0deg)"
@@ -279,13 +208,13 @@ export default function Home() {
         starelems[i].style.transform = "translate(-3%, 40%) rotate(-360deg)"
       }
       if (i == starelems.length - 1) {
-        var delay = 3000;
+        var delay = 2700;
         if (actstars === 3) {
-          delay = 2500;
-        } else if (actstars === 1) {
-          delay = 1000;
-        } else if (actstars === 2) {
           delay = 2000;
+        } else if (actstars === 1) {
+          delay = 800;
+        } else if (actstars === 2) {
+          delay = 1400;
         }
         setTimeout(() => {
           const text = document.getElementById("text")

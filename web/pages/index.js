@@ -51,7 +51,7 @@ export default function Home() {
       text.innerHTML = "Here's how " + router.query.store + " did this week"
       axios({
         method: 'get',
-        url: 'https://rygb.tech:8443/getAverageSRating?store=' + router.query.store,
+        url: 'https://api.rygb.tech:8443/getAverageSRating?store=' + router.query.store,
       }).then((response) => {
         console.log(response)
         if (isConfirmed == false) {
@@ -149,7 +149,7 @@ export default function Home() {
       if ("mmredblock62@gmail.com" != undefined) {
       console.log(store)
       const date = new Date();
-      axios.post('https://rygb.tech:8443/addSFeedback', {
+      axios.post('https://api.rygb.tech:8443/addSFeedback', {
         store: store,
         email: "mmredblock62@gmail.com",
         stars: stars,
@@ -160,7 +160,7 @@ export default function Home() {
         console.log(error);
       });
     } else {
-      axios.post('https://rygb.tech:8443/addAnonymousStoreFeedback', {
+      axios.post('https://api.rygb.tech:8443/addAnonymousStoreFeedback', {
         store: store,
         stars: stars,
         date: date
@@ -225,7 +225,7 @@ export default function Home() {
           } else {
             axios({
               method: 'get',
-              url: 'https://rygb.tech:8443/getSFeedback?store=' + store,
+              url: 'https://api.rygb.tech:8443/getSFeedback?store=' + store,
             }).then(function (response) {
               const data = response.data;
               console.log(data)
@@ -632,7 +632,7 @@ useEffect(() => {
     if (debouncedStore) {
       axios({
         method: 'get',
-        url: 'https://rygb.tech:8443/getStoreStars?name=' + store
+        url: 'https://api.rygb.tech:8443/getStoreStars?name=' + store
       }).then(function(response) {
         document.getElementById("totalstars").innerHTML = response.data;
       }).catch(function(error) {

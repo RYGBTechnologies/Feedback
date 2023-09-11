@@ -63,6 +63,23 @@ export default function Home() {
           rate(parseInt(response.data), false)
         })
       })
+    } else if (router.query.store != undefined) {
+      const text = document.getElementById("text");
+      text.innerHTML = "How was your experience with " + router.query.store + "?"
+      axios({
+        method: 'get',
+        url: 'https://api.rygb.tech:8443/getAverageSRating?store=' + router.query.store,
+      }).then((response) => {
+        console.log(response)
+        if (isConfirmed == false) {
+          setStars(response.data)
+        }
+        setMode(false)
+        
+        window.requestAnimationFrame(() => {
+          rate(parseInt(response.data), false)
+        })
+      })
     }
   }
 
@@ -92,19 +109,6 @@ export default function Home() {
       })
     }
   }, [debouncedStars]);
-
-  const randomUsed = []
-
-  function regenerateRandom() {
-    const random = Math.floor(Math.random() * randomTranslate.length)
-    for (var i = 0; i < reviews.length; i++) {
-      if (reviews[i].style.transform === randomTranslate[random]) {
-        regenerateRandom()
-      }
-    }
-    //keep regeneratign random if the random is the same transform
-    return randomTranslate[random]
-  }
 
   function starBounceAnimation() {
     const star = document.getElementById("star");
@@ -680,12 +684,7 @@ useEffect(() => {
       
 
       <div id="smallmodal" className={styles.smallmodal}>
-        <img alt="Star" onClick={() => setStars(1)} src="star-filled.png" width="60px" id="star"></img>
         <h1 id="totalstars" className={styles.text} style={{fontSize: "40px"}}>-</h1>
-      </div>
-
-      <div className={styles.itemsgrid}>
-        <h1 className={styles.text} id="text">How was your experience at RYGB?</h1>
         <div id="stars" className={styles.stargrid}>
           <img alt="1 Star" onClick={() => setStars(1)} className={styles.star} src="star.png" id="star1"></img>
           <img alt="2 Stars" onClick={() => setStars(2)} className={styles.star} src="star.png" id="star2"></img>
@@ -693,17 +692,16 @@ useEffect(() => {
           <img alt="4 Stars" onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4"></img>
           <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="star.png" id="star5"></img>
         </div>
-        <audio id="5star" src="5star.mp3" style={{display: "none"}}></audio>
-        <audio id="4star" src="4star.mp3" style={{display: "none"}}></audio>
-        <audio id="3star" src="3star.mp3" style={{display: "none"}}></audio>
-        <audio id="2star" src="2star.mp3" style={{display: "none"}}></audio>
-        <audio id="1star" src="1star.mp3" style={{display: "none"}}></audio>
-        <div id="filledstars" className={styles.filledstars}>
-          <img id="fstar1" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
-          <img id="fstar2" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
-          <img id="fstar3" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
-          <img id="fstar4" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
-          <img id="fstar5" style={{display: "none"}} className={styles.fstar} src="beatstar-star.gif"></img>
+      </div>
+
+      <div className={styles.itemsgrid}>
+        <h1 className={styles.text} id="text">How was your experience with RYGB?</h1>
+        <div id="stars" className={styles.stargrid}>
+          <img alt="1 Star" onClick={() => setStars(1)} className={styles.star} src="star.png" id="star1"></img>
+          <img alt="2 Stars" onClick={() => setStars(2)} className={styles.star} src="star.png" id="star2"></img>
+          <img alt="3 Stars" onClick={() => setStars(3)} className={styles.star} src="star.png" id="star3"></img>
+          <img alt="4 Stars" onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4"></img>
+          <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="star.png" id="star5"></img>
         </div>
       </div>
 

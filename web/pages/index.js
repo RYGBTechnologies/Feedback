@@ -5,6 +5,7 @@ import { motion, useAnimation } from "framer-motion"
 import Cookies from 'js-cookie'
 import axios from 'axios'
 import styles from '../styles/Home.module.css'
+import anime from 'animejs';
 
 export default function Home() {
   const videoRef = useRef();
@@ -16,7 +17,6 @@ export default function Home() {
   const animationControls = useAnimation();
   const [stars, setStars] = useState(0)
   const [mode, setMode] = useState(true)
-  const debouncedStars = useDebounce(stars, 1000)
   const [isConfirmed, setIsConfirmed] = useState(false)
   var rated = 0;
 
@@ -55,10 +55,10 @@ export default function Home() {
         url: 'https://api.rygb.tech:8443/getAverageSRating?store=' + router.query.store,
       }).then((response) => {
         console.log(response)
+        setMode(false)
         if (isConfirmed == false) {
           setStars(response.data)
         }
-        setMode(false)
 
         window.requestAnimationFrame(() => {
           rate(parseInt(response.data), false)
@@ -70,47 +70,16 @@ export default function Home() {
     }
   }
 
-  function showModal() {
-    const modal = document.getElementById("smallmodal");
-    const anim = modal.animate({ transform: "translateX(-50%) translateY(0) scale(1)" }, { duration: 1000, ease: "easeInOut" })
-    anim.onfinish = () => {
-      modal.style.transform = "translateX(-50%) translateY(0) scale(1)"
-    }
-  }
-
-  function hideModal() {
-    const modal = document.getElementById("smallmodal");
-    const anim = modal.animate({ transform: "translateX(-50%) translateY(-500%) scale(0)" }, { duration: 1000, ease: "easeInOut" })
-    anim.onfinish = () => {
-      modal.style.transform = "translateX(-50%) translateY(-500%) scale(0)"
-    }
-  }
-
   var reviews = []
   var soundPlayed = false
 
   useEffect(() => {
-    if (debouncedStars && router.isReady && stars !== 0) {
+    if (router.isReady && stars !== 0) {
       window.requestAnimationFrame(() => {
         rate(stars)
       })
     }
-  }, [debouncedStars]);
-
-  function starBounceAnimation() {
-    const star = document.getElementById("star");
-    const anim = star.animate({ transform: "scale(1.3)", filter: "brightness(1.5)" }, { duration: 150, ease: "easeInOut" })
-    anim.onfinish = () => {
-      star.style.transform = "scale(1.3)"
-      star.style.filter = "brightness(1.3)"
-      document.getElementById("totalstars").innerHTML = parseInt(document.getElementById("totalstars").innerHTML) + 1;
-      const anim2 = star.animate({ transform: "scale(1)", filter: "brightness(1)" }, { duration: 150, ease: "easeInOut" })
-      anim2.onfinish = () => {
-        star.style.transform = "scale(1)"
-        star.style.filter = "brightness(1)"
-      }
-    }
-  }
+  }, [stars]);
 
   var randomTranslate = [
     "translate(20%, 20%)",
@@ -127,54 +96,76 @@ export default function Home() {
     if (rated > 1 || stars === 0) {
       return;
     }
-    rated++;
-    console.log("rate")
-    const starelems = [];
-    const star1 = document.getElementById("star1");
-    const star2 = document.getElementById("star2");
-    const star3 = document.getElementById("star3");
-    const star4 = document.getElementById("star4");
-    const star5 = document.getElementById("star5");
-    starelems.push(star1)
-    starelems.push(star2)
-    starelems.push(star3)
-    starelems.push(star4)
-    starelems.push(star5)
-    const actstars = Math.round(stars);
-
-    if (mode) {
-      if ("mmredblock62@gmail.com" != undefined) {
-        console.log(store)
-        const date = new Date();
-        axios.post('https://api.rygb.tech:8443/addSFeedback', {
-          store: store,
-          email: "mmredblock62@gmail.com",
-          stars: stars,
-          date: date
-        }).then(function (response) {
-          console.log(response);
-        }).catch(function (error) {
-          console.log(error);
-        });
-      } else {
-        axios.post('https://api.rygb.tech:8443/addAnonymousStoreFeedback', {
-          store: store,
-          stars: stars,
-          date: date
-        }).then(function (response) {
-          console.log(response);
-        }).catch(function (error) {
-          console.log(error);
-        });
+    const blurredStar = document.getElementById("blurredStar");
+    anime({
+      targets: document.body,
+      backgroundColor: "#393100",
+      easing: "easeInOutQuad",
+      duration: 5000
+    })
+    anime({
+      targets: blurredStar,
+      opacity: 1,
+      translateX: Math.random * 2,
+      translateY: Math.random * 2,
+      scale: 1 * (num / 1.5),
+      duration: 5000,
+      easing: "easeInOutQuad",
+    })
+    setTimeout(() => {
+      rated++;
+      console.log("rate")
+      const starelems = [];
+      const star1 = document.getElementById("star1");
+      const star2 = document.getElementById("star2");
+      const star3 = document.getElementById("star3");
+      const star4 = document.getElementById("star4");
+      const star5 = document.getElementById("star5");
+      starelems.push(star1)
+      if (num >= 2) {
+        starelems.push(star2)
       }
-    }
+      if (num >= 3) {
+        starelems.push(star3)
+      }
+      if (num >= 4) {
+        starelems.push(star4)
+      }
+      if (num >= 5) {
+        starelems.push(star5)
+      }
+      const actstars = Math.round(stars);
 
-    console.log(starelems)
-    const audio = new Audio(num + "star.mp3");
-    audio.play();
-    for (let i = 0; i < starelems.length; i++) {
-      console.log(audioPlayed + " - " + " audio played 222")
-      if (audioPlayed || mode) {
+      if (mode) {
+        if ("mmredblock62@gmail.com" != undefined) {
+          console.log(store)
+          const date = new Date();
+          axios.post('https://api.rygb.tech:8443/addSFeedback', {
+            store: store,
+            email: "mmredblock62@gmail.com",
+            stars: actstars,
+            date: date
+          }).then(function (response) {
+            console.log(response);
+          }).catch(function (error) {
+            console.log(error);
+          });
+        } else {
+          axios.post('https://api.rygb.tech:8443/addAnonymousStoreFeedback', {
+            store: store,
+            stars: stars,
+            date: date
+          }).then(function (response) {
+            console.log(response);
+          }).catch(function (error) {
+            console.log(error);
+          });
+        }
+      }
+
+      console.log(starelems)
+      for (let i = 0; i < starelems.length; i++) {
+        console.log(audioPlayed + " - " + " audio played 222")
         starelems[i].style.display = "block"
         document.getElementById(`star${i + 1}`).src = "star-filled.png";
         if (i == starelems.length - 1) {
@@ -182,9 +173,7 @@ export default function Home() {
             const text = document.getElementById("text")
             const anim = text.animate({ transform: "scale(1.05)" }, { duration: 200 });
             console.log(mode)
-            if (mode) {
-              window.requestAnimationFrame(showModal)
-            } else {
+            if (!mode) {
               axios({
                 method: 'get',
                 url: 'https://api.rygb.tech:8443/getSFeedback?store=' + store,
@@ -192,7 +181,6 @@ export default function Home() {
                 const data = response.data;
                 console.log(data)
                 console.log(data[0])
-                console.log(data[0].stars)
                 setReviews(data)
                 for (var i = 0; i < data.length; i++) {
                   console.log("i: " + i)
@@ -265,8 +253,6 @@ export default function Home() {
                   }
                 }
 
-              }).catch(function (error) {
-                console.log(error);
               })
             }
             anim.onfinish = () => {
@@ -276,36 +262,41 @@ export default function Home() {
               } else {
                 text.style.display = "none"
               }
+
+              setTimeout(() => {
+                if (router.query.mode == "kiosk") {
+                  anime({
+                    targets: document.body,
+                    backgroundColor: "#000000",
+                    easing: "easeInOutQuad",
+                    delay: 500,
+                    duration: 5000,
+                    complete: function () {
+                      anime({
+                        targets: ["#text", "#logo"],
+                        opacity: 0,
+                        duration: 500,
+                        delay: 1000,
+                        easing: "easeInOutQuad",
+                        complete: function () {
+                          window.location.reload();
+                        }
+                      })
+                    }
+                  })
+                  anime({
+                    targets: [blurredStar, "#stars"],
+                    opacity: 0,
+                    duration: 5000,
+                    easing: "easeInOutQuad",
+                  })
+                }
+              }, 3000);
               const anim2 = text.animate({ transform: "scale(1)" }, { duration: 200 });
               anim2.onfinish = () => {
                 text.style.transform = "scale(1)";
               }
-              if (mode) {
-                for (let i2 = 0; i2 < starelems.length; i2++) {
-                  setTimeout(() => {
-                    starelems[i2].style.opacity = "1"
-                  }, i2 * 300)
-
-                  starelems[i2].style.transform = "translate(-3%, 40%) rotate(-360deg)"
-                  const anim3 = starelems[i2].animate({ transform: "translate(-50%, -700%) rotate(0deg)", left: "50%", marginTop: "15px" }, { duration: 700, delay: i2 * 300 });
-                  anim3.onfinish = () => {
-                    starBounceAnimation();
-                    starelems[i2].style.transform = "translateX(-50%) translateY(-700%) rotate(0deg)"
-                    starelems[i2].style.opacity = "0"
-                    starelems[i2].style.left = "50%"
-                    starelems[i2].style.marginTop = "15px"
-                    if (mode) {
-                      if (i2 == starelems.length - 1) {
-                        setTimeout(() => {
-                          hideModal()
-                        }, 2000)
-                      }
-                    } else {
-                      spawnArrows()
-                    }
-                  }
-                }
-              } else {
+              if (!mode) {
                 spawnArrows()
               }
             };
@@ -313,8 +304,7 @@ export default function Home() {
           }, 500)
         }
       }
-
-    }
+    }, 1000)
   }
 
   useEffect(() => {
@@ -639,19 +629,6 @@ export default function Home() {
         <img id="logo" src="cornermgr.png" width="230" height="230" />
       </div>
 
-
-
-      <div id="smallmodal" className={styles.smallmodal}>
-        <h1 id="totalstars" className={styles.text} style={{ fontSize: "40px" }}>-</h1>
-        <div id="stars" className={styles.stargrid}>
-          <img alt="1 Star" onClick={() => setStars(1)} className={styles.star} src="star.png" id="star1s"></img>
-          <img alt="2 Stars" onClick={() => setStars(2)} className={styles.star} src="star.png" id="star2s"></img>
-          <img alt="3 Stars" onClick={() => setStars(3)} className={styles.star} src="star.png" id="star3s"></img>
-          <img alt="4 Stars" onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4s"></img>
-          <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="star.png" id="star5s"></img>
-        </div>
-      </div>
-
       <div className={styles.itemsgrid}>
         <h1 className={styles.text} id="text">How was your experience with RYGB?</h1>
         <div id="stars" className={styles.stargrid}>
@@ -661,6 +638,7 @@ export default function Home() {
           <img alt="4 Stars" onClick={() => setStars(4)} className={styles.star} src="star.png" id="star4"></img>
           <img alt="5 Stars" onClick={() => setStars(5)} className={styles.star} src="star.png" id="star5"></img>
         </div>
+        <img alt="Background Blurred Star" className={styles.starBlurred} src="star-filled.png" id="blurredStar"></img>
       </div>
 
       <div id="reviews">
